@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Vest {
 
+    private Integer id;
+
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String naslov;
@@ -103,5 +105,9 @@ public class Vest {
 
     public void setKomentari(List<Komentar> komentari) {
         this.komentari = komentari;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

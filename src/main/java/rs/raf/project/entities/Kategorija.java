@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Kategorija {
 
+    private Integer id;
+
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String ime;
@@ -42,5 +44,9 @@ public class Kategorija {
 
     public void setOpis(String opis) {
         this.opis = opis;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

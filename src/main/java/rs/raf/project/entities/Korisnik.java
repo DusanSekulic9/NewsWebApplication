@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 
 public class Korisnik {
 
+    private Integer id;
+
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String email;
@@ -82,5 +84,9 @@ public class Korisnik {
 
     public void setLozinka(String lozinka) {
         this.lozinka = lozinka;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

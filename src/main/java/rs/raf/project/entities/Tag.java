@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 
 public class Tag {
 
+    private Integer id;
+
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String rec;
@@ -21,5 +23,9 @@ public class Tag {
 
     public void setRec(String rec) {
         this.rec = rec;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

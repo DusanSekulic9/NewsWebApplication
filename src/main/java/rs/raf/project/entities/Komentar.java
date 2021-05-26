@@ -6,6 +6,8 @@ import java.util.Date;
 
 public class Komentar {
 
+    private Integer id;
+
     private Integer vestId;
 
     @NotNull(message = "Title field is required")
@@ -54,5 +56,9 @@ public class Komentar {
 
     public Integer getVestId() {
         return vestId;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }
