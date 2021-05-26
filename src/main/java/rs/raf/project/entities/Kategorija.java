@@ -24,7 +24,8 @@ public class Kategorija {
 
     }
 
-    public Kategorija(@NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String ime, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String opis) {
+    public Kategorija(Integer id,@NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String ime, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String opis) {
+        this.id = id;
         this.ime = ime;
         this.opis = opis;
         this.vesti = new ArrayList<>();
@@ -48,5 +49,9 @@ public class Kategorija {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
