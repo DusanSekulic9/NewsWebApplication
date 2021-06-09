@@ -27,7 +27,13 @@ public class Korisnik {
     @NotEmpty(message = "Title field is required")
     private String lozinka;
 
-    public Korisnik(){}
+    public Korisnik(String email, String imeIPrezime, String status, String tipKorisnika, String lozinka){
+        this.email = email;
+        this.imeIPrezime = imeIPrezime;
+        this.tipKorisnika = TipKorisnika.valueOf(tipKorisnika);
+        this.status = Status.valueOf(status);
+        this.lozinka = lozinka;
+    }
 
     public Korisnik(@NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String email, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String imeIPrezime, TipKorisnika tipKorisnika, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String lozinka) {
         this.email = email;
@@ -62,16 +68,16 @@ public class Korisnik {
         this.imeIPrezime = imeIPrezime;
     }
 
-    public TipKorisnika getTipKorisnika() {
-        return tipKorisnika;
+    public String getTipKorisnika() {
+        return tipKorisnika.toString();
     }
 
     public void setTipKorisnika(TipKorisnika tipKorisnika) {
         this.tipKorisnika = tipKorisnika;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getStatus() {
+        return status.toString();
     }
 
     public void setStatus(Status status) {
@@ -88,5 +94,9 @@ public class Korisnik {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

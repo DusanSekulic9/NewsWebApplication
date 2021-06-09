@@ -30,6 +30,14 @@ public class Komentar {
         this.datum = new Date();
     }
 
+    public Komentar(Integer id, Integer vestId, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String autor, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String teskt, Date datum) {
+        this.id = id;
+        this.vestId = vestId;
+        this.autor = autor;
+        this.teskt = teskt;
+        this.datum = datum;
+    }
+
     public Date getDatum() {
         return datum;
     }
@@ -60,5 +68,9 @@ public class Komentar {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

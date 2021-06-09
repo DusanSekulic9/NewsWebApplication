@@ -24,8 +24,16 @@ public class VestService {
         this.vestRepository.deleteVest(id);
     }
 
-    public void counterUpdate(Integer id) {
-        this.vestRepository.counterUpdate(id);
+    public List<Vest> recentVesti(Integer brStrane){
+        return this.vestRepository.RecentVesti(brStrane);
+    }
+
+    public List<Vest> popularVesti(Integer brStrane){
+        return this.vestRepository.PopularVesti(brStrane);
+    }
+
+    public List<Vest> vestIzKategorije(Integer kategorijaId, Integer brStrane){
+        return this.vestRepository.VestIzKategorije(kategorijaId,brStrane);
     }
 
     public List<Vest> all() {

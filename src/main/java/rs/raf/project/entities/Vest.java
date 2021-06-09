@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Vest {
+public class Vest implements Comparable<Vest>{
 
     private Integer id;
 
@@ -28,6 +28,7 @@ public class Vest {
     private Integer kategorijaId;
 
     private List<Komentar> komentari;
+    private List<Tag> tagoviList;
 
     public Vest() {
     }
@@ -109,5 +110,28 @@ public class Vest {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public List<Tag> getTagoviList() {
+        return tagoviList;
+    }
+
+    public void setTagoviList(List<Tag> tagoviList) {
+        this.tagoviList = tagoviList;
+    }
+
+    @Override
+    public int compareTo(Vest o) {
+        if(this.datum.compareTo(o.datum) == 1){
+            return 1;
+        }else if(this.datum.compareTo(o.datum) == 0){
+            return 0;
+        }else{
+            return -1;
+        }
     }
 }

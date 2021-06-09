@@ -51,6 +51,27 @@ public class VestResource {
         return this.vestService.updateVest(vest);
     }
 
+    @GET
+    @Path("/home/{brStrane}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Vest> recentVesti(@PathParam("brStrane") Integer brStrane){
+        return vestService.recentVesti(brStrane);
+    }
+
+    @GET
+    @Path("/category/{categoryId}/{brStrane}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Vest> categoryVesti(@PathParam("categoryId") Integer kategorijaId, @PathParam("brStrane") Integer brStrane){
+        return vestService.vestIzKategorije(kategorijaId, brStrane);
+    }
+
+    @GET
+    @Path("/popular/{brStrane}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Vest> popularVesti(@PathParam("brStrane") Integer brStrane){
+        return vestService.popularVesti(brStrane);
+    }
+
 
 
 }

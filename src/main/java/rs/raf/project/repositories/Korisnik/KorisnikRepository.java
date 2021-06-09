@@ -15,6 +15,8 @@ public interface KorisnikRepository {
 
     public List<Korisnik> all();
 
+    public Korisnik getKorisnikByEmail(String email);
+
     //public void setStatusKorisnik(Integer id);
 
 }

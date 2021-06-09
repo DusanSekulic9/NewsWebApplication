@@ -39,7 +39,8 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
     }
 
     @Override
-    public Kategorija addKategorija(Kategorija kategorija) { Connection connection = null;
+    public Kategorija addKategorija(Kategorija kategorija) {
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
@@ -91,7 +92,25 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
 
     @Override
     public Kategorija updateKategorija(Kategorija kategorija) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("UPDATE kategorije set ime=?, opis=? where id = ?");
+            preparedStatement.setString(1, kategorija.getIme());
+            preparedStatement.setString(2, kategorija.getOpis());
+            preparedStatement.setInt(3, kategorija.getId());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
         return kategorija;
-        //TO-DO update
     }
 }
