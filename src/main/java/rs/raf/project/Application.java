@@ -28,6 +28,7 @@ public class Application extends ResourceConfig {
         // Ukljucujemo validaciju
         property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
 
+
         // Definisemo implementacije u dependency container-u
         AbstractBinder binder = new AbstractBinder() {
             @Override
