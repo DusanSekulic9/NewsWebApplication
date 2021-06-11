@@ -12,8 +12,8 @@ public class KategorijaService {
     @Inject
     private KategorijaRepository kategorijaRepository;
 
-    public List<Kategorija> all() {
-        return this.kategorijaRepository.all();
+    public List<Kategorija> all(Integer page) {
+        return this.kategorijaRepository.all(page);
     }
 
     public Kategorija addKategorija(Kategorija kategorija) {
@@ -26,5 +26,9 @@ public class KategorijaService {
 
     public Kategorija updateKategorija(@Valid Kategorija kategorija) {
         return this.kategorijaRepository.updateKategorija(kategorija);
+    }
+
+    public int getPagginationForCategory(){
+        return this.kategorijaRepository.getPagginationLimitForAllCategories();
     }
 }

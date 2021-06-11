@@ -25,7 +25,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
 
 
     @Override
-    public List<Vest> getVestiByTagId(Integer tagId) {
+    public List<Vest> getVestiByTagId(Integer tagId, Integer page) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -150,5 +150,32 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             this.closeConnection(connection);
         }
         return list;
+    }
+
+    @Override
+    public int paginationForTags(Integer tagId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count = 0;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(vestId) as count FROM vest_tag where tagId = ?");
+            preparedStatement.setInt(1, tagId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return count/10 + 1;
     }
 }

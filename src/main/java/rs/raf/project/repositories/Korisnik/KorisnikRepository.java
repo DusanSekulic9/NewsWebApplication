@@ -13,10 +13,12 @@ public interface KorisnikRepository {
 
     public Korisnik getKorisnik(Integer id);
 
-    public List<Korisnik> all();
+    public List<Korisnik> all(Integer page);
 
     public Korisnik getKorisnikByEmail(String email);
 
     //public void setStatusKorisnik(Integer id);
+
+    public int getPagginationLimitForAllUsers();
 
 }

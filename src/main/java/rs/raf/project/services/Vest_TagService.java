@@ -13,8 +13,8 @@ public class Vest_TagService {
     @Inject
     private Vest_TagRepository vest_tagRepository;
 
-    public List<Vest> getVestiByTagId(Integer tagId){
-        return vest_tagRepository.getVestiByTagId(tagId);
+    public List<Vest> getVestiByTagId(Integer tagId, Integer page){
+        return vest_tagRepository.getVestiByTagId(tagId, page);
     }
 
     public List<Tag> getTagsByVestId(Integer vestId){
@@ -27,5 +27,9 @@ public class Vest_TagService {
 
     public List<Vest_Tag> all(){
         return vest_tagRepository.all();
+    }
+
+    public int getPagginationForTag(Integer tagId){
+        return this.vest_tagRepository.paginationForTags(tagId);
     }
 }

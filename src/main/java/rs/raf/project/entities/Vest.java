@@ -10,6 +10,8 @@ public class Vest implements Comparable<Vest>{
 
     private Integer id;
 
+    private Integer autorId;
+
     @NotNull(message = "Title field is required")
     @NotEmpty(message = "Title field is required")
     private String naslov;
@@ -122,6 +124,14 @@ public class Vest implements Comparable<Vest>{
 
     public void setTagoviList(List<Tag> tagoviList) {
         this.tagoviList = tagoviList;
+    }
+
+    public Integer getAutorId() {
+        return autorId;
+    }
+
+    public void setAutorId(Integer autorId) {
+        this.autorId = autorId;
     }
 
     @Override

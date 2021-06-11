@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MySqlKategorijaRepository extends MySqlAbstractRepository implements KategorijaRepository {
     @Override
-    public List<Kategorija> all() {
+    public List<Kategorija> all(Integer page) {
         List<Kategorija> kategorije = new ArrayList<>();
 
         Connection connection = null;
@@ -21,7 +21,13 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM kategorije");
+            preparedStatement = connection.prepareStatement("SELECT * FROM kategorije limit ?, 10");
+            if(page == 1){
+                preparedStatement.setInt(1, 0);
+            }else{
+                preparedStatement.setInt(1, page * 10 - 10);
+            }
+
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 kategorije.add(new Kategorija(resultSet.getInt("id"), resultSet.getString("ime"), resultSet.getString("opis")));
@@ -36,6 +42,33 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
         }
 
         return kategorije;
+    }
+
+    @Override
+    public int getPagginationLimitForAllCategories() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count = 0;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM kategorije");
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return count/10 + 1;
     }
 
     @Override

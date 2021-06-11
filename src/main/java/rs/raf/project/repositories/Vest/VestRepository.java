@@ -14,4 +14,6 @@ public interface VestRepository {
     public List<Vest> VestIzKategorije(Integer idKategorije, Integer brStrane);
     public List<Vest> all();
     public Vest getVest(Integer id);
+    public int getPagginationForPopularNews();
+    public int getPagginationForAllNews();
 }

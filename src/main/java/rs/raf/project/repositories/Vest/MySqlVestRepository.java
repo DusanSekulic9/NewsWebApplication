@@ -53,7 +53,11 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
 
             String[] tags = vest.getTagovi().split(",");
             for(String tag : tags){
-                tagRepository.addTag(new Tag(tag));
+                try {
+                    tagRepository.addTag(new Tag(tag.trim()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 vest_tagRepository.addVest_Tag(vest.getId(), tagRepository.getTagId(tag));
             }
 
@@ -129,8 +133,13 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM vesti");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti ORDER BY datum DESC limit ?, 10; ");
+            if(brStrane == 1){
+                preparedStatement.setInt(1, 0);
 
+            }else{
+                preparedStatement.setInt(1, brStrane*10 - 10);
+            }
             preparedStatement.executeUpdate();
 
             while(resultSet.next()){
@@ -154,7 +163,6 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
                 vesti.add(vest);
             }
 
-            vesti.sort(null);
 
         }catch(SQLException e){
             e.printStackTrace();
@@ -162,7 +170,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
-        return vesti.subList(brStrane*10-10, brStrane*10 - 1);
+        return vesti;
     }
 
     @Override
@@ -175,8 +183,13 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM vesti");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) order by brojPoseta desc limit ?,10");
+            if(brStrane == 1){
+                preparedStatement.setInt(1, 0);
 
+            }else{
+                preparedStatement.setInt(1, brStrane*10 - 10);
+            }
             preparedStatement.executeUpdate();
 
             while(resultSet.next()){
@@ -200,15 +213,13 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
                 vesti.add(vest);
             }
 
-            vesti.sort(PoseteComparator);
-
         }catch(SQLException e){
             e.printStackTrace();
         }finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
-        return vesti.subList(brStrane*10-10, brStrane*10 - 1);
+        return vesti;
     }
 
     @Override
@@ -221,8 +232,14 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM vesti where kategorijaId = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti where kategorijaId = ? limit ?, 10");
             preparedStatement.setInt(1, idKategorije);
+            if(brStrane == 1){
+                preparedStatement.setInt(2, 0);
+
+            }else{
+                preparedStatement.setInt(2, brStrane*10 - 10);
+            }
             preparedStatement.executeUpdate();
 
             while(resultSet.next()){
@@ -252,8 +269,10 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
-        return vesti.subList(brStrane*10-10, brStrane*10 - 1);
+        return vesti;
     }
+
+
 
 
     @Override
@@ -306,5 +325,59 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             this.closeConnection(connection);
         }
         return vest;
+    }
+
+    @Override
+    public int getPagginationForPopularNews() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count = 0;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY)");
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return count/10 + 1;
+    }
+
+    @Override
+    public int getPagginationForAllNews() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count = 0;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti");
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return count/10 + 1;
     }
 }

@@ -43,4 +43,12 @@ public class VestService {
     public Vest getVest(Integer id) {
         return this.vestRepository.getVest(id);
     }
+
+    public int getPagginationForAllNews(){
+        return this.vestRepository.getPagginationForAllNews();
+    }
+
+    public int getPagginationForPopularNews(){
+        return this.vestRepository.getPagginationForPopularNews();
+    }
 }

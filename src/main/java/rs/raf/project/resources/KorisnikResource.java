@@ -21,9 +21,10 @@ public class KorisnikResource {
     private KorisnikService korisnikService;
 
     @GET
+    @Path("/{page}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Korisnik> getAll(){
-        return this.korisnikService.all();
+    public List<Korisnik> getAll(@PathParam("page") Integer page){
+        return this.korisnikService.all(page);
     }
 
     @GET
@@ -59,6 +60,13 @@ public class KorisnikResource {
         }
         response.put("jwt", jwt);
         return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/paggination")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getPagginationForCategory(){
+        return this.korisnikService.getPagginationForAllUsers();
     }
 
 }

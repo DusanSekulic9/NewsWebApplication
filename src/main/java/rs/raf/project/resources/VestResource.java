@@ -32,13 +32,14 @@ public class VestResource {
     }
 
     @POST
+    @Path("/nova-vest")
     @Produces(MediaType.APPLICATION_JSON)
     public Vest addVest(@Valid Vest vest){
         return this.vestService.addVest(vest);
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("delete-vest/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public void deleteVest(@PathParam("id") Integer id){
         this.vestService.deleteVest(id);
@@ -70,6 +71,20 @@ public class VestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Vest> popularVesti(@PathParam("brStrane") Integer brStrane){
         return vestService.popularVesti(brStrane);
+    }
+
+    @GET
+    @Path("/paggination")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getPagginationForAllNews(){
+        return this.vestService.getPagginationForAllNews();
+    }
+
+    @GET
+    @Path("/paggination-popular")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getPagginationForPopularNews(){
+        return this.vestService.getPagginationForPopularNews();
     }
 
 

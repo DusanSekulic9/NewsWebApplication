@@ -8,11 +8,13 @@ import java.util.List;
 
 public interface Vest_TagRepository {
 
-    public List<Vest> getVestiByTagId(Integer tagId);
+    public List<Vest> getVestiByTagId(Integer tagId, Integer page);
 
     public List<Tag> getTagsByVestId(Integer vestId);
 
     public void addVest_Tag(Integer vestId, Integer tagId);
 
     public List<Vest_Tag> all();
+
+    public int paginationForTags(Integer tagId);
 }

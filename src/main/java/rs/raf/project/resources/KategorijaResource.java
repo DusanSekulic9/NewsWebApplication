@@ -17,9 +17,10 @@ public class KategorijaResource {
     private KategorijaService kategorijaService;
 
     @GET
+    @Path("/{page}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Kategorija> getAllCategories(){
-        return this.kategorijaService.all();
+    public List<Kategorija> getAllCategories(@PathParam("page") Integer page){
+        return this.kategorijaService.all(page);
     }
 
     @POST
@@ -42,4 +43,12 @@ public class KategorijaResource {
     public void updateKategorija(@Valid Kategorija kategorija){
         this.kategorijaService.updateKategorija(kategorija);
     }
+
+    @GET
+    @Path("/paggination")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getPagginationForCategory(){
+        return this.kategorijaService.getPagginationForCategory();
+    }
+
 }

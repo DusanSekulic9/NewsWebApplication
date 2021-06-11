@@ -32,8 +32,8 @@ public class KorisnikService {
         return this.korisnikRepository.getKorisnik(id);
     }
 
-    public List<Korisnik> all() {
-        return this.korisnikRepository.all();
+    public List<Korisnik> all(Integer page) {
+        return this.korisnikRepository.all(page);
     }
 
     public String login(String email, String password){
@@ -55,31 +55,8 @@ public class KorisnikService {
                 .sign(algorithm);
     }
 
-    public boolean isLoggedIn(String token){
-        Algorithm algorithm = Algorithm.HMAC256("sifra123");
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT jwt = verifier.verify(token);
-        String email = jwt.getSubject();
-        Status status = Status.valueOf(jwt.getClaim("status").asString());
-        if (status.equals(Status.NEAKTIVAN)) return false;
-        Korisnik korisnik = this.korisnikRepository.getKorisnikByEmail(email);
-        if(korisnik == null) return false;
-        return true;
-    }
-
-    public boolean isAdmin(String token){
-        Algorithm algorithm = Algorithm.HMAC256("sifra123");
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT jwt = verifier.verify(token);
-        String email = jwt.getSubject();
-        String strStatus = jwt.getClaim("status").asString();
-        TipKorisnika tip = TipKorisnika.valueOf(jwt.getClaim("tip").asString());
-        Status status = Status.valueOf(jwt.getClaim("status").asString());
-        if (status.equals(Status.NEAKTIVAN)) return false;
-        Korisnik korisnik = this.korisnikRepository.getKorisnikByEmail(email);
-        if(korisnik == null) return false;
-        if(tip.equals(TipKorisnika.CONTNENT_CREATOR)) return false;
-        return true;
+    public int getPagginationForAllUsers(){
+        return this.korisnikRepository.getPagginationLimitForAllUsers();
     }
 
 }
