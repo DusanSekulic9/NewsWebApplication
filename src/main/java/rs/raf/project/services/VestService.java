@@ -51,4 +51,12 @@ public class VestService {
     public int getPagginationForPopularNews(){
         return this.vestRepository.getPagginationForPopularNews();
     }
+
+    public List<Vest> getSearchedNews(String parameter, Integer brStrane) {
+        return this.vestRepository.getSearchedVesti(parameter, brStrane);
+    }
+
+    public int getPagginationForSearchedNews(String parameter) {
+        return this.vestRepository.getPagginationForSearchedNews(parameter);
+    }
 }

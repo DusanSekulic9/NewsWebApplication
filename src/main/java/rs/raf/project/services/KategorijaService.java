@@ -24,8 +24,8 @@ public class KategorijaService {
         this.kategorijaRepository.deleteKategorija(id);
     }
 
-    public Kategorija updateKategorija(@Valid Kategorija kategorija) {
-        return this.kategorijaRepository.updateKategorija(kategorija);
+    public Kategorija updateKategorija(@Valid Kategorija kategorija, Integer id) {
+        return this.kategorijaRepository.updateKategorija(kategorija, id);
     }
 
     public int getPagginationForCategory(){

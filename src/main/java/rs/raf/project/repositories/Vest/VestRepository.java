@@ -16,4 +16,9 @@ public interface VestRepository {
     public Vest getVest(Integer id);
     public int getPagginationForPopularNews();
     public int getPagginationForAllNews();
+    public int getPagginationForSearchedNews(String parameter);
+    public List<Vest> getSearchedVesti(String parameter, Integer brStrane);
+
+    //TO-DO Cookie
+
 }

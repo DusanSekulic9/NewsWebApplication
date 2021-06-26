@@ -34,8 +34,14 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM vest_tag where tagId = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vest_tag where tagId = ? limit ?, 10");
             preparedStatement.setInt(1, tagId);
+            if(page == 1){
+                preparedStatement.setInt(1, 0);
+
+            }else{
+                preparedStatement.setInt(1, page*10 - 10);
+            }
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 

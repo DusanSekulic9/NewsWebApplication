@@ -13,9 +13,11 @@ import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.List;
 
+@Provider
 public class AuthFilter implements ContainerRequestFilter {
 
     @Inject
@@ -23,7 +25,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
     private boolean canContentCreatorAccess(ContainerRequestContext request) {
         if (request.getUriInfo().getPath().contains("paggination")) return false;
-        if (request.getUriInfo().getPath().contains("kategorije")) return true;
+        if (request.getUriInfo().getPath().contains("kategorije")) return false;
         if (request.getUriInfo().getPath().contains("nova-vest")) return true;
         if (request.getUriInfo().getPath().contains("edit-vest")) return true;
         if (request.getUriInfo().getPath().contains("delete-vest")) return true;
@@ -61,7 +63,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
     }
 
-    public boolean isLoggedIn(String token){
+    public boolean isLoggedIn(String token) {
         Algorithm algorithm = Algorithm.HMAC256("sifra123");
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);
@@ -69,11 +71,11 @@ public class AuthFilter implements ContainerRequestFilter {
         Status status = Status.valueOf(jwt.getClaim("status").asString());
         if (status.equals(Status.NEAKTIVAN)) return false;
         Korisnik korisnik = this.korisnikRepository.getKorisnikByEmail(email);
-        if(korisnik == null) return false;
+        if (korisnik == null) return false;
         return true;
     }
 
-    public boolean isAdmin(String token){
+    public boolean isAdmin(String token) {
         Algorithm algorithm = Algorithm.HMAC256("sifra123");
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);
@@ -83,8 +85,8 @@ public class AuthFilter implements ContainerRequestFilter {
         Status status = Status.valueOf(strStatus);
         if (status.equals(Status.NEAKTIVAN)) return false;
         Korisnik korisnik = this.korisnikRepository.getKorisnikByEmail(email);
-        if(korisnik == null) return false;
-        if(tip.equals(TipKorisnika.CONTNENT_CREATOR)) return false;
+        if (korisnik == null) return false;
+        if (tip.equals(TipKorisnika.CONTNENT_CREATOR)) return false;
         return true;
     }
 

@@ -79,6 +79,16 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
         try {
             connection = this.newConnection();
 
+            preparedStatement = connection.prepareStatement("SELECT * FROM kategorije WHERE ime like ?");
+            preparedStatement.setString(1, kategorija.getIme());
+            preparedStatement.executeUpdate();
+
+            resultSet = preparedStatement.getGeneratedKeys();
+
+            if(resultSet.next()){
+                return null;
+            }
+
             String[] generatedColumns = {"id"};
 
             preparedStatement = connection.prepareStatement("INSERT INTO kategorije (ime, opis) VALUES(?, ?)", generatedColumns);
@@ -106,8 +116,18 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
     public void deleteKategorija(Integer id) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT FROM vesti where kategorijaId = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+
+            if(resultSet.next()){
+                return;
+            }
 
             preparedStatement = connection.prepareStatement("DELETE FROM kategorije where id = ?");
             preparedStatement.setInt(1, id);
@@ -124,7 +144,7 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
     }
 
     @Override
-    public Kategorija updateKategorija(Kategorija kategorija) {
+    public Kategorija updateKategorija(Kategorija kategorija, Integer id) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {

@@ -10,6 +10,6 @@ public interface KategorijaRepository {
     public int getPagginationLimitForAllCategories();
     public Kategorija addKategorija(Kategorija kategorija);
     public void deleteKategorija(Integer id);
-    public Kategorija updateKategorija(Kategorija kategorija);
+    public Kategorija updateKategorija(Kategorija kategorija, Integer id);
 
 }

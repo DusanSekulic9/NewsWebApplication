@@ -28,7 +28,7 @@ abstract public class MySqlAbstractRepository {
     }
 
     protected String getDatabaseName() {
-        return "db_novine";
+        return "web_projekat";
     }
 
     protected String getUsername() {
@@ -36,7 +36,7 @@ abstract public class MySqlAbstractRepository {
     }
 
     protected String getPassword() {
-        return "123123123";
+        return "";
     }
 
     protected void closeStatement(Statement statement) {

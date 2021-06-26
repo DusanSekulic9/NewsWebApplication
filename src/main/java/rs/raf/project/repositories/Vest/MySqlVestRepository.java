@@ -27,6 +27,9 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
 
     private PoseteComparator PoseteComparator;
 
+
+    //TO-DO Cookie
+
     @Override
     public Vest addVest(Vest vest) {
         Connection connection = null;
@@ -379,5 +382,82 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         }
 
         return count/10 + 1;
+    }
+
+    @Override
+    public int getPagginationForSearchedNews(String parameter) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count = 0;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE naslov like %?% OR tekst like %?%");
+            preparedStatement.setString(1, parameter);
+            preparedStatement.setString(2, parameter);
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return count/10 + 1;
+    }
+
+
+    @Override
+    public List<Vest> getSearchedVesti(String parameter, Integer brStrane) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Vest> vesti = new ArrayList<>();
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE naslov like %?% OR tekst like %?%");
+            preparedStatement.setString(1, parameter);
+            preparedStatement.setString(2, parameter);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                Vest vest = new Vest();
+                String naslov = resultSet.getString("naslov");
+                String tekst = resultSet.getString("tekst");
+                Date datum = resultSet.getDate("datum");
+                Integer kreatorId = resultSet.getInt("kreatorId");
+                Integer kategorijaId = resultSet.getInt("kategorijaId");
+                Integer brojPoseta = resultSet.getInt("brojPoseta");
+                Integer id = resultSet.getInt("id");
+                vest.setDatum(datum);
+                vest.setId(id);
+                vest.setKategorijaId(kategorijaId);
+                vest.setKreatorId(kreatorId);
+                vest.setNaslov(naslov);
+                vest.setPosete(brojPoseta);
+                vest.setTekst(tekst);
+                vest.setKomentari(komentarRepository.allCommentsForParentId(id));
+                vest.setTagoviList(vest_tagRepository.getTagsByVestId(id));
+                vesti.add(vest);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return vesti;
     }
 }

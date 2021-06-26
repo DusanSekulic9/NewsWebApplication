@@ -38,10 +38,10 @@ public class KategorijaResource {
     }
 
     @PUT
-    @Path("/izmeni-kategoriju")
+    @Path("/izmeni-kategoriju/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void updateKategorija(@Valid Kategorija kategorija){
-        this.kategorijaService.updateKategorija(kategorija);
+    public void updateKategorija(@Valid Kategorija kategorija, @PathParam("id") Integer id){
+        this.kategorijaService.updateKategorija(kategorija, id);
     }
 
     @GET

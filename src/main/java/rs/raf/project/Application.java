@@ -39,6 +39,7 @@ public class Application extends ResourceConfig {
                 this.bind(MySqlTagRepository.class).to(TagRepository.class).in(Singleton.class);
                 this.bind(MySqlVestRepository.class).to(VestRepository.class).in(Singleton.class);
                 this.bind(MySqlVest_TagRepository.class).to(Vest_TagRepository.class).in(Singleton.class);
+
                 this.bindAsContract(KategorijaService.class);
                 this.bindAsContract(KomentarService.class);
                 this.bindAsContract(KorisnikService.class);
@@ -50,7 +51,7 @@ public class Application extends ResourceConfig {
         register(binder);
 
         // Ucitavamo resurse
-        packages("rs.raf.project.resources");
+        packages("rs.raf.project");
 
     }
 }

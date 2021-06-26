@@ -87,6 +87,20 @@ public class VestResource {
         return this.vestService.getPagginationForPopularNews();
     }
 
+    @POST
+    @Path("/paggination-searched")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int getPagginationForSearchedNews(String parameter){
+        return this.vestService.getPagginationForSearchedNews(parameter);
+    }
+
+    @POST
+    @Path("/searched/{brStrane}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Vest> getSearchedVesti(@PathParam("brStrane") Integer brStrane,String parameter){
+        return this.vestService.getSearchedNews(parameter, brStrane);
+    }
+
 
 
 }
