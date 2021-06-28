@@ -18,8 +18,10 @@ import rs.raf.project.repositories.vest_tag.MySqlVest_TagRepository;
 import rs.raf.project.repositories.vest_tag.Vest_TagRepository;
 import rs.raf.project.services.*;
 
+import javax.inject.Scope;
 import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.ext.Provider;
 
 @ApplicationPath("/api")
 public class Application extends ResourceConfig {

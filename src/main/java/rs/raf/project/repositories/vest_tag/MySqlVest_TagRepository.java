@@ -3,15 +3,13 @@ package rs.raf.project.repositories.vest_tag;
 import rs.raf.project.entities.Tag;
 import rs.raf.project.entities.Vest;
 import rs.raf.project.entities.Vest_Tag;
+import rs.raf.project.repositories.Komentar.KomentarRepository;
 import rs.raf.project.repositories.MySqlAbstractRepository;
 import rs.raf.project.repositories.Tag.TagRepository;
 import rs.raf.project.repositories.Vest.VestRepository;
 
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
     private TagRepository tagRepository;
 
     @Inject
-    private VestRepository vestRepository;
+    private KomentarRepository komentarRepository;
 
 
     @Override
@@ -37,17 +35,16 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             preparedStatement = connection.prepareStatement("SELECT * FROM vest_tag where tagId = ? limit ?, 10");
             preparedStatement.setInt(1, tagId);
             if(page == 1){
-                preparedStatement.setInt(1, 0);
+                preparedStatement.setInt(2, 0);
 
             }else{
-                preparedStatement.setInt(1, page*10 - 10);
+                preparedStatement.setInt(2, page*10 - 10);
             }
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Integer vestId = resultSet.getInt("vestId");
-                list.add(vestRepository.getVest(vestId));
+                list.add(getVest(vestId));
             }
 
 
@@ -56,7 +53,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
         return list;
@@ -74,8 +71,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
 
             preparedStatement = connection.prepareStatement("SELECT * FROM vest_tag where vestId = ?");
             preparedStatement.setInt(1, vestId);
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Integer tagId = resultSet.getInt("tagId");
@@ -88,7 +84,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
         return list;
@@ -110,6 +106,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
+            System.out.println("ubacio tag_vest");
 
 
         } catch (SQLException e) {
@@ -132,8 +129,7 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
 
 
             preparedStatement = connection.prepareStatement("SELECT * FROM vest_tag");
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Vest_Tag vest_tag = new Vest_Tag();
@@ -183,5 +179,48 @@ public class MySqlVest_TagRepository extends MySqlAbstractRepository implements 
         }
 
         return count/10 + 1;
+    }
+
+    public Vest getVest(Integer vestId){
+        Vest vest = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try{
+            connection = this.newConnection();
+
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti where id = ?");
+            preparedStatement.setInt(1, vestId);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                vest = new Vest();
+                String naslov = resultSet.getString("naslov");
+                String tekst = resultSet.getString("tekst");
+                Date datum = resultSet.getDate("datum");
+                Integer kreatorId = resultSet.getInt("kreatorId");
+                Integer kategorijaId = resultSet.getInt("kategorijaId");
+                Integer brojPoseta = resultSet.getInt("brojPoseta");
+                Integer ids = resultSet.getInt("id");
+                vest.setDatum(datum);
+                vest.setId(ids);
+                vest.setKategorijaId(kategorijaId);
+                vest.setKreatorId(kreatorId);
+                vest.setNaslov(naslov);
+                vest.setPosete(brojPoseta);
+                vest.setTekst(tekst);
+                vest.setKomentari(komentarRepository.allCommentsForParentId(ids));
+                vest.setTagoviList(this.getTagsByVestId(ids));
+            }
+
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+        return vest;
     }
 }

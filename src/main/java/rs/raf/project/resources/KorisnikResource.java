@@ -21,14 +21,14 @@ public class KorisnikResource {
     private KorisnikService korisnikService;
 
     @GET
-    @Path("/{page}")
+    @Path("all/{page}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Korisnik> getAll(@PathParam("page") Integer page){
         return this.korisnikService.all(page);
     }
 
     @GET
-    @Path("/{id}")
+    @Path("singleKorisnik/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Korisnik getKorisnik(@PathParam("id") Integer id){
         return this.korisnikService.getKorisnik(id);
@@ -49,10 +49,11 @@ public class KorisnikResource {
     }
 
     @POST
-    @Path("/logIn")
+    @Path("logIn")
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Valid LogIn login){
         Map<String, String> response = new HashMap<>();
+        System.out.println("krece login");
         String jwt = this.korisnikService.login(login.getEmail(), login.getPassword());
         if (jwt == null) {
             response.put("message", "Unknown user, please try again");
@@ -63,7 +64,7 @@ public class KorisnikResource {
     }
 
     @GET
-    @Path("/paggination")
+    @Path("paggination")
     @Produces(MediaType.APPLICATION_JSON)
     public int getPagginationForCategory(){
         return this.korisnikService.getPagginationForAllUsers();

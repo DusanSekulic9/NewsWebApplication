@@ -16,18 +16,18 @@ public class MySqlKomentarRepository extends MySqlAbstractRepository implements 
         try {
             connection = this.newConnection();
 
-            String[] generatedColumns = {"id"};
+            String[] generatedColumns = {"id", "datum"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO komentari (autor, tekst, datum, vestId) VALUES(?, ?, ?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO komentari (autor, tekst, vestId) VALUES(?, ?, ?)", generatedColumns);
             preparedStatement.setString(1, comment.getAutor());
             preparedStatement.setString(2, comment.getTeskt());
-            preparedStatement.setDate(3, (Date) comment.getDatum());
-            preparedStatement.setInt(4, comment.getVestId());
+            preparedStatement.setInt(3, comment.getVestId());
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
                 comment.setId(resultSet.getInt(1));
+                comment.setDatum(resultSet.getDate("datum"));
             }
 
         } catch (SQLException e) {

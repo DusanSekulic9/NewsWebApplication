@@ -50,6 +50,7 @@ public class KorisnikService {
         return JWT.create()
                 .withIssuedAt(issuedAt)
                 .withSubject(email)
+                .withExpiresAt(new Date("08/06/2021"))
                 .withClaim("status", korisnik.getStatus().toString())
                 .withClaim("tip", korisnik.getTipKorisnika().toString())
                 .sign(algorithm);

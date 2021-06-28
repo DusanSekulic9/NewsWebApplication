@@ -39,7 +39,7 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -79,16 +79,17 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         Korisnik korisnik = null;
+        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
             preparedStatement = connection.prepareStatement("SELECT * FROM korisnici where id = ?");
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()){
                 korisnik = new Korisnik(resultSet.getString("email"), resultSet.getString("imeIPrezime"), resultSet.getString("status"), resultSet.getString("tipKorisnika"), resultSet.getString("lozinka"));
+                korisnik.setId(resultSet.getInt("id"));
             }
 
 
@@ -109,6 +110,7 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
         List<Korisnik> korisnici = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
@@ -119,11 +121,11 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
             }else{
                 preparedStatement.setInt(1, page*10 - 10);
             }
-            preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 korisnici.add(new Korisnik(resultSet.getString("email"), resultSet.getString("imeIPrezime"), resultSet.getString("status"), resultSet.getString("tipKorisnika"), resultSet.getString("lozinka")));
+                korisnici.get(korisnici.size() - 1).setId(resultSet.getInt("id"));
             }
 
 
@@ -143,16 +145,31 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
         Korisnik korsinik = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM korisnici where email = ?");
-            preparedStatement.setString(1,email);
-            preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            System.out.println(email);
 
-            while(resultSet.next()){
+            String[] generatedColumns = {"id"};
+
+            //"email", "imeIPrezime", "status", "tipKorisnika", "lozinka"
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM korisnici");
+
+            resultSet = preparedStatement.executeQuery();
+
+
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM korisnici where email = ?", generatedColumns);
+            preparedStatement.setString(1, email);
+            preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
+
+
+            if(resultSet.next()){
                 korsinik = new Korisnik(resultSet.getString("email"), resultSet.getString("imeIPrezime"), resultSet.getString("status"), resultSet.getString("tipKorisnika"), resultSet.getString("lozinka"));
+                korsinik.setId(resultSet.getInt("id"));
             }
             preparedStatement.close();
             connection.close();

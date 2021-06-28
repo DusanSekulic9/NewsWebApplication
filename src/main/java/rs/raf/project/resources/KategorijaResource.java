@@ -17,7 +17,7 @@ public class KategorijaResource {
     private KategorijaService kategorijaService;
 
     @GET
-    @Path("/{page}")
+    @Path("/all/{page}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Kategorija> getAllCategories(@PathParam("page") Integer page){
         return this.kategorijaService.all(page);

@@ -35,6 +35,10 @@ public class Korisnik {
         this.lozinka = lozinka;
     }
 
+    public Korisnik(){
+
+    }
+
     public Korisnik(@NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String email, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String imeIPrezime, TipKorisnika tipKorisnika, @NotNull(message = "Title field is required") @NotEmpty(message = "Title field is required") String lozinka) {
         this.email = email;
         this.imeIPrezime = imeIPrezime;
@@ -49,7 +53,7 @@ public class Korisnik {
         this.imeIPrezime = imeIPrezime;
         this.lozinka = lozinka;
         this.status = Status.AKTIVAN;
-        this.tipKorisnika = TipKorisnika.CONTNENT_CREATOR;
+        this.tipKorisnika = TipKorisnika.CONTENT_CREATOR;
     }
 
     public String getEmail() {

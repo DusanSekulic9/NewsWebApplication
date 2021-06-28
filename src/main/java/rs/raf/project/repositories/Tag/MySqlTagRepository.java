@@ -11,6 +11,7 @@ import java.sql.SQLException;
 public class MySqlTagRepository extends MySqlAbstractRepository implements TagRepository {
     @Override
     public Tag addTag(Tag tag) {
+        System.out.println("usao u tag repo");
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -32,10 +33,11 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
+        System.out.println("ubacio tag");
         return tag;
     }
 
@@ -52,8 +54,7 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
 
             preparedStatement = connection.prepareStatement("SELECT id FROM tagovi where rec=?", generatedColumns);
             preparedStatement.setString(1, tag);
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 id = resultSet.getInt(1);
@@ -63,7 +64,7 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -83,8 +84,7 @@ public class MySqlTagRepository extends MySqlAbstractRepository implements TagRe
 
             preparedStatement = connection.prepareStatement("SELECT * FROM tagovi where id=?", generatedColumns);
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 tag = new Tag(resultSet.getString("rec"));

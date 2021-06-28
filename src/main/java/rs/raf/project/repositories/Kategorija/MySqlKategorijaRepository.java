@@ -76,20 +76,27 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        int count = 0;
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM kategorije WHERE ime like ?");
-            preparedStatement.setString(1, kategorija.getIme());
-            preparedStatement.executeUpdate();
+            String[] generatedColumns = {"id"};
 
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM kategorije WHERE ime like ?", generatedColumns);
+            preparedStatement.setString(1, kategorija.getIme());
+
+            preparedStatement.executeQuery();
             resultSet = preparedStatement.getGeneratedKeys();
 
-            if(resultSet.next()){
+            while (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+
+
+            if(count > 0){
                 return null;
             }
 
-            String[] generatedColumns = {"id"};
 
             preparedStatement = connection.prepareStatement("INSERT INTO kategorije (ime, opis) VALUES(?, ?)", generatedColumns);
             preparedStatement.setString(1, kategorija.getIme());
@@ -98,6 +105,7 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
             resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
+                System.out.println("usao da setuje id");
                 kategorija.setId(resultSet.getInt(1));
             }
 
@@ -105,7 +113,7 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -120,14 +128,14 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT FROM vesti where kategorijaId = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti where kategorijaId = ?");
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
+            //resultSet = preparedStatement.getGeneratedKeys();
 
-            if(resultSet.next()){
-                return;
-            }
+//            if(resultSet.next()){
+//                return;
+//            }
 
             preparedStatement = connection.prepareStatement("DELETE FROM kategorije where id = ?");
             preparedStatement.setInt(1, id);

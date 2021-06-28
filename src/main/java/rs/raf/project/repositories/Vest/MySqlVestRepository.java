@@ -25,7 +25,6 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
     @Inject
     private TagRepository tagRepository;
 
-    private PoseteComparator PoseteComparator;
 
 
     //TO-DO Cookie
@@ -38,23 +37,23 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
-            String[] generatedColumns = {"id"};
+            String[] generatedColumns = {"id", "datum"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO vesti (naslov, tekst, datum, brojPoseta, kreatorId, kategorijaId) VALUES(?, ?,?,?,?,?,?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO vesti (naslov, tekst, brojPoseta, kreatorId, kategorijaId) VALUES(?, ?,?,?,?)", generatedColumns);
             preparedStatement.setString(1, vest.getNaslov());
             preparedStatement.setString(2, vest.getTekst());
-            preparedStatement.setDate(3, (Date) vest.getDatum());
-            preparedStatement.setInt(4, vest.getPosete());
-            preparedStatement.setInt(5, vest.getKreatorId());
-            preparedStatement.setInt(6, vest.getKategorijaId());
+            preparedStatement.setInt(3, 0);
+            preparedStatement.setInt(4, vest.getKreatorId());
+            preparedStatement.setInt(5, vest.getKategorijaId());
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
                 vest.setId(resultSet.getInt(1));
+                vest.setPosete(0);
             }
 
-            String[] tags = vest.getTagovi().split(",");
+            String[] tags = vest.getTagovi().split(" ");
             for(String tag : tags){
                 try {
                     tagRepository.addTag(new Tag(tag.trim()));
@@ -68,7 +67,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -84,20 +83,19 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("UPDATE vesti set naslov = ?, teskt = ?, datum = ?, kreatorId = ?, kategorijaId = ? where id = ?");
+            preparedStatement = connection.prepareStatement("UPDATE vesti set naslov = ?, tekst = ?, kreatorId = ?, kategorijaId = ? where id = ?");
             preparedStatement.setString(1, vest.getNaslov());
             preparedStatement.setString(2, vest.getTekst());
-            preparedStatement.setDate(3, (Date) vest.getDatum());
-            preparedStatement.setInt(4, vest.getKreatorId());
-            preparedStatement.setInt(5, vest.getKategorijaId());
-            preparedStatement.setInt(6, vest.getId());
+            preparedStatement.setInt(3, vest.getKreatorId());
+            preparedStatement.setInt(4, vest.getKategorijaId());
+            preparedStatement.setInt(5, vest.getId());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -143,7 +141,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             }else{
                 preparedStatement.setInt(1, brStrane*10 - 10);
             }
-            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Vest vest = new Vest();
@@ -186,14 +184,14 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             connection = this.newConnection();
 
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) order by brojPoseta desc limit ?,10");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW() ORDER BY brojPoseta desc limit ?,10");
             if(brStrane == 1){
                 preparedStatement.setInt(1, 0);
 
             }else{
                 preparedStatement.setInt(1, brStrane*10 - 10);
             }
-            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Vest vest = new Vest();
@@ -243,7 +241,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             }else{
                 preparedStatement.setInt(2, brStrane*10 - 10);
             }
-            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 Vest vest = new Vest();
@@ -295,9 +293,10 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
 
             preparedStatement = connection.prepareStatement("SELECT * FROM vesti where id = ?");
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()){
+                vest = new Vest();
                 String naslov = resultSet.getString("naslov");
                 String tekst = resultSet.getString("tekst");
                 Date datum = resultSet.getDate("datum");
@@ -339,7 +338,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE datum BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()");
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -393,9 +392,10 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
+            parameter = parameter.trim().replace(" ", "");
             preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE naslov like %?% OR tekst like %?%");
-            preparedStatement.setString(1, parameter);
-            preparedStatement.setString(2, parameter);
+            preparedStatement.setString(1, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
+            preparedStatement.setString(2, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -406,7 +406,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -423,9 +423,10 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE naslov like %?% OR tekst like %?%");
-            preparedStatement.setString(1, parameter);
-            preparedStatement.setString(2, parameter);
+            parameter = parameter.trim().replace(" ", "");
+            preparedStatement = connection.prepareStatement("SELECT * FROM vesti WHERE naslov like ? OR tekst like ?");
+            preparedStatement.setString(1, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
+            preparedStatement.setString(2, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
 
             resultSet = preparedStatement.executeQuery();
 
@@ -454,7 +455,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
+            //this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 

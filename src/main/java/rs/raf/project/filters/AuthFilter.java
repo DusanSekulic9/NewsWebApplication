@@ -25,7 +25,8 @@ public class AuthFilter implements ContainerRequestFilter {
 
     private boolean canContentCreatorAccess(ContainerRequestContext request) {
         if (request.getUriInfo().getPath().contains("paggination")) return false;
-        if (request.getUriInfo().getPath().contains("kategorije")) return false;
+        if (request.getUriInfo().getPath().contains("kategorije/all")) return false;
+        if (request.getUriInfo().getPath().contains("kategorije")) return true;
         if (request.getUriInfo().getPath().contains("nova-vest")) return true;
         if (request.getUriInfo().getPath().contains("edit-vest")) return true;
         if (request.getUriInfo().getPath().contains("delete-vest")) return true;
@@ -33,6 +34,7 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private boolean canAdminAccess(ContainerRequestContext request) {
+        if (request.getUriInfo().getPath().contains("korisnik/logIn")) return false;
         if (request.getUriInfo().getPath().contains("korisnik")) return true;
         return false;
     }
@@ -86,7 +88,7 @@ public class AuthFilter implements ContainerRequestFilter {
         if (status.equals(Status.NEAKTIVAN)) return false;
         Korisnik korisnik = this.korisnikRepository.getKorisnikByEmail(email);
         if (korisnik == null) return false;
-        if (tip.equals(TipKorisnika.CONTNENT_CREATOR)) return false;
+        if (tip.equals(TipKorisnika.CONTENT_CREATOR)) return false;
         return true;
     }
 
