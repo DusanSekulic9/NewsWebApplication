@@ -24,7 +24,7 @@ public class KategorijaResource {
     }
 
     @GET
-    @Path("/all")
+    @Path("/sve")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Kategorija> getAllC(){
         return this.kategorijaService.allC();

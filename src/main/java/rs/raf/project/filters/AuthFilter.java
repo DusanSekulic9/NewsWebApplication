@@ -25,7 +25,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
     private boolean canContentCreatorAccess(ContainerRequestContext request) {
         if (request.getUriInfo().getPath().contains("paggination")) return false;
-        if (request.getUriInfo().getPath().contains("kategorije/all")) return false;
+        if (request.getUriInfo().getPath().contains("kategorije/sve")) return false;
         if (request.getUriInfo().getPath().contains("kategorije")) return true;
         if (request.getUriInfo().getPath().contains("nova-vest")) return true;
         if (request.getUriInfo().getPath().contains("edit-vest")) return true;
