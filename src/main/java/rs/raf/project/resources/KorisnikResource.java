@@ -1,5 +1,6 @@
 package rs.raf.project.resources;
 
+import com.google.gson.Gson;
 import rs.raf.project.LogIn;
 import rs.raf.project.entities.Korisnik;
 import rs.raf.project.services.KorisnikService;
@@ -16,6 +17,8 @@ import java.util.Map;
 
 @Path("/korisnik")
 public class KorisnikResource {
+
+    Gson gson = new Gson();
 
     @Inject
     private KorisnikService korisnikService;
@@ -52,15 +55,16 @@ public class KorisnikResource {
     @Path("logIn")
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Valid LogIn login){
-        Map<String, String> response = new HashMap<>();
-        System.out.println("krece login");
+        Map<String, Object> response = new HashMap<>();
         String jwt = this.korisnikService.login(login.getEmail(), login.getPassword());
         if (jwt == null) {
             response.put("message", "Unknown user, please try again");
             return Response.status(422, "Unprocessable Entity").entity(response).build();
         }
+        response.put("korisnik", this.korisnikService.getK(login.getEmail()));
         response.put("jwt", jwt);
-        return Response.ok(response).build();
+        //this.korisnikService.getK(login.getEmail());
+        return Response.ok(response).header("Authorization", jwt).build();
     }
 
     @GET

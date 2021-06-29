@@ -1,5 +1,6 @@
 package rs.raf.project.entities;
 
+import com.google.gson.Gson;
 import rs.raf.project.enums.Status;
 import rs.raf.project.enums.TipKorisnika;
 
@@ -7,6 +8,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class Korisnik {
+
+    Gson gson = new Gson();
 
     private Integer id;
 
@@ -102,5 +105,10 @@ public class Korisnik {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return this.gson.toJson(this);
     }
 }

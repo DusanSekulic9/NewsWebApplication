@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,10 @@ public class KorisnikService {
 
     public int getPagginationForAllUsers(){
         return this.korisnikRepository.getPagginationLimitForAllUsers();
+    }
+
+    public Korisnik getK(String email){
+       return this.korisnikRepository.getKorisnikByEmail(email);
     }
 
 }

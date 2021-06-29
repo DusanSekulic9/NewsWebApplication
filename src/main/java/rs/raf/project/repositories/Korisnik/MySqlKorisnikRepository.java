@@ -155,10 +155,6 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
 
             //"email", "imeIPrezime", "status", "tipKorisnika", "lozinka"
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM korisnici");
-
-            resultSet = preparedStatement.executeQuery();
-
 
 
             preparedStatement = connection.prepareStatement("SELECT * FROM korisnici where email = ?", generatedColumns);
