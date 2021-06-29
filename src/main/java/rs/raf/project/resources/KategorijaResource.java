@@ -23,6 +23,13 @@ public class KategorijaResource {
         return this.kategorijaService.all(page);
     }
 
+    @GET
+    @Path("/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Kategorija> getAllC(){
+        return this.kategorijaService.allC();
+    }
+
     @POST
     @Path("/nova-kategorija")
     @Produces(MediaType.APPLICATION_JSON)

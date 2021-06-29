@@ -16,6 +16,12 @@ public class KategorijaService {
         return this.kategorijaRepository.all(page);
     }
 
+    public List<Kategorija> allC() {
+        return this.kategorijaRepository.allC();
+    }
+
+
+
     public Kategorija addKategorija(Kategorija kategorija) {
         return kategorijaRepository.addKategorija(kategorija);
     }

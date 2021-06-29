@@ -43,12 +43,15 @@ public class AuthFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
         if (!(canContentCreatorAccess(containerRequestContext) || canAdminAccess(containerRequestContext))) {
+            System.out.println(containerRequestContext.getHeaders());
             return;
         }
 
 
         try {
+            System.out.println(containerRequestContext.getHeaders());
             String token = containerRequestContext.getHeaderString("Authorization");
+            if(token == null) return;
             if (this.canContentCreatorAccess(containerRequestContext)) {
                 if (!isLoggedIn(token)) {
                     containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());

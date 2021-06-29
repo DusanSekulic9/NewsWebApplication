@@ -45,6 +45,35 @@ public class MySqlKategorijaRepository extends MySqlAbstractRepository implement
     }
 
     @Override
+    public List<Kategorija> allC() {
+        List<Kategorija> kategorije = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM kategorije");
+
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                kategorije.add(new Kategorija(resultSet.getInt("id"), resultSet.getString("ime"), resultSet.getString("opis")));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return kategorije;
+    }
+
+    @Override
     public int getPagginationLimitForAllCategories() {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
