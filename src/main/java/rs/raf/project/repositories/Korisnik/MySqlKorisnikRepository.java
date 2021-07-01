@@ -105,6 +105,40 @@ public class MySqlKorisnikRepository extends MySqlAbstractRepository implements 
 
     }
 
+
+    @Override
+    public Korisnik getKorisnikName(Integer id) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        Korisnik korisnik = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM korisnici where id = ?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                korisnik = new Korisnik(resultSet.getString("email"), resultSet.getString("imeIPrezime"), resultSet.getString("status"), resultSet.getString("tipKorisnika"), resultSet.getString("lozinka"));
+                korisnik.setId(resultSet.getInt("id"));
+            }
+
+
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+        return korisnik;
+
+    }
+
+
+
     @Override
     public List<Korisnik> all(Integer page) {
         List<Korisnik> korisnici = new ArrayList<>();

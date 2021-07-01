@@ -21,4 +21,6 @@ public interface KorisnikRepository {
 
     public int getPagginationLimitForAllUsers();
 
+    public Korisnik getKorisnikName(Integer id);
+
 }

@@ -1,5 +1,6 @@
 package rs.raf.project.repositories.Vest;
 
+import com.google.gson.Gson;
 import rs.raf.project.entities.PoseteComparator;
 import rs.raf.project.entities.Tag;
 import rs.raf.project.entities.Vest;
@@ -25,6 +26,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
     @Inject
     private TagRepository tagRepository;
 
+    Gson gson = new Gson();
 
 
     //TO-DO Cookie
@@ -82,6 +84,8 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
+            System.out.println(vest.getKategorijaId());
+
 
             preparedStatement = connection.prepareStatement("UPDATE vesti set naslov = ?, tekst = ?, kreatorId = ?, kategorijaId = ? where id = ?");
             preparedStatement.setString(1, vest.getNaslov());
@@ -90,6 +94,16 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
             preparedStatement.setInt(4, vest.getKategorijaId());
             preparedStatement.setInt(5, vest.getId());
             preparedStatement.executeUpdate();
+
+            String[] tags = vest.getTagovi().split(" ");
+            for(String tag : tags){
+                try {
+                    tagRepository.addTag(new Tag(tag.trim()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                vest_tagRepository.addVest_Tag(vest.getId(), tagRepository.getTagId(tag));
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -392,6 +406,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
+            parameter = gson.fromJson(parameter, String.class);
             parameter = parameter.trim().replace(" ", "");
             preparedStatement = connection.prepareStatement("SELECT count(id) as count FROM vesti WHERE naslov like %?% OR tekst like %?%");
             preparedStatement.setString(1, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
@@ -415,7 +430,7 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
 
 
     @Override
-    public List<Vest> getSearchedVesti(String parameter, Integer brStrane) {
+    public List<Vest> getSearchedVesti(String param, Integer brStrane) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -423,14 +438,28 @@ public class MySqlVestRepository extends MySqlAbstractRepository implements Vest
         try {
             connection = this.newConnection();
 
-            parameter = parameter.trim().replace(" ", "");
+            System.out.println(param);
+
+            param = param.trim().replace(" ", "");
+
+            param = param.replace("}", "");
+            param = param.replace("{", "");
+
+            param = param.trim();
+
+            System.out.println(param);
+
+            String s = "SELECT * FROM vesti WHERE naslov like \'%" + param.split(":")[1].replace("\"", "").split("\\n")[0] + "%\' OR tekst like \'%" + param.split(":")[1].replace("\"", "").split("\\n")[0] +"%\'";
+
+            System.out.println(s);
+
             preparedStatement = connection.prepareStatement("SELECT * FROM vesti WHERE naslov like ? OR tekst like ?");
-            preparedStatement.setString(1, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
-            preparedStatement.setString(2, "%" + parameter.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
+            preparedStatement.setString(1, "%" + param.split(":")[1].replace("\"", "").split("\\n")[0] + "%");
+            preparedStatement.setString(2, "\'%" + param.split(":")[1].replace("\"", "").split("\\n")[0] + "%\'");
 
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()){
+            while(resultSet.next()){
                 Vest vest = new Vest();
                 String naslov = resultSet.getString("naslov");
                 String tekst = resultSet.getString("tekst");

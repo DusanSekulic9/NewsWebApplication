@@ -65,4 +65,8 @@ public class KorisnikService {
        return this.korisnikRepository.getKorisnikByEmail(email);
     }
 
+    public Korisnik getKorisnikName(Integer id){
+        return this.korisnikRepository.getKorisnikName(id);
+    }
+
 }

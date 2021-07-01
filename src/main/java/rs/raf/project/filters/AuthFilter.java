@@ -35,6 +35,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
     private boolean canAdminAccess(ContainerRequestContext request) {
         if (request.getUriInfo().getPath().contains("korisnik/logIn")) return false;
+        if (request.getUriInfo().getPath().contains("korisnik/korisnikName")) return false;
         if (request.getUriInfo().getPath().contains("korisnik")) return true;
         return false;
     }

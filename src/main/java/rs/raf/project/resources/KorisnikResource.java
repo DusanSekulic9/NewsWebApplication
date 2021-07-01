@@ -74,4 +74,12 @@ public class KorisnikResource {
         return this.korisnikService.getPagginationForAllUsers();
     }
 
+    @GET
+    @Path("korisnikName/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Korisnik getKorisnikName(@PathParam("id") Integer id){
+        return this.korisnikService.getKorisnikName(id);
+    }
+
+
 }
